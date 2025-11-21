@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Mapa da Rota</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 100vh; width: 100%; }
+
+    #btnLocalizacao {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 9999;
+      padding: 10px 16px;
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    #btnLocalizacao:hover {
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Use a entidade HTML para o emoji do botão (mais resiliente) -->
+  <button id="btnLocalizacao">&#x1F4CD; Usar minha localização</button>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+    // Inicializa mapa em São Paulo
+    const map = L.map('map').setView([-23.5505, -46.6333], 10);
+
+    // Base OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // PONTOS (origem e destino)
+    const origem = [-23.5505, -46.6333];   // SP
+    const destino = [-22.9056, -47.0608];  // Campinas
+
+    // Marcadores
+    L.marker(origem).addTo(map).bindPopup("Origem");
+    L.marker(destino).addTo(map).bindPopup("Destino");
+
+    // ============================
+    // 🛣️ TRAÇAR ROTA REAL (OSRM)
+    // ============================
+    fetch(`https://router.project-osrm.org/route/v1/driving/${origem[1]},${origem[0]};${destino[1]},${destino[0]}?overview=full&geometries=geojson`)
+      .then(res => res.json())
+      .then(data => {
+        const rota = data.routes[0].geometry;
+
+        // Desenha a linha real da rota
+        L.geoJSON(rota, {
+          style: {
+            color: "blue",
+            weight: 5
+          }
+        }).addTo(map);
+
+        // Ajusta o zoom para caber a rota inteira
+        const coords = rota.coordinates.map(c => [c[1], c[0]]);
+        map.fitBounds(coords);
+      });
+
+    // ============================
+    // 📍 BOTÃO DE LOCALIZAÇÃO
+    // ============================
+    document.getElementById("btnLocalizacao").addEventListener("click", () => {
+
+      if (!navigator.geolocation) {
+        alert("Geolocalização não é suportada neste navegador.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          map.setView([lat, lon], 15);
+
+          // Usando escape Unicode para o emoji (resiliente caso haja qualquer problema)
+          L.marker([lat, lon]).addTo(map)
+            .bindPopup('\u{1F4CD} Você está aqui')
+            .openPopup();
+        },
+        () => {
+          alert("Não foi possível obter sua localização.");
+        }
+      );
+
+    });
+  </script>
+</body>
+</html>
