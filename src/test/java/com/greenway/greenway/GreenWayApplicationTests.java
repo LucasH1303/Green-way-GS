@@ -12,7 +12,7 @@ import com.greenway.greenway.security.SecurityConfig;
 @SpringBootTest(
 	webEnvironment = SpringBootTest.WebEnvironment.MOCK,
 	properties = {
-		"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration",
+		"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration",
 		"spring.cache.type=none",
 		"management.endpoints.enabled-by-default=false",
 		"spring.jpa.hibernate.ddl-auto=create-drop",
