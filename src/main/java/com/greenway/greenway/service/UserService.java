@@ -5,11 +5,10 @@ import com.greenway.greenway.dto.UserDTO;
 import com.greenway.greenway.mapper.UserMapper;
 import com.greenway.greenway.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class UserService {
@@ -21,7 +20,7 @@ public class UserService {
     private UserMapper mapper;
 
     @Autowired
-    private MessageSource messageSource;
+    private PasswordEncoder passwordEncoder;
 
     // CREATE USER
     public UserDTO create(UserDTO dto) {
@@ -33,7 +32,17 @@ public class UserService {
         User user = mapper.toEntity(dto);
 
         user.setPoints(0);
-        user.setPassword(""); // se houver lógica de senha, implementar depois
+        // Criptografa a senha antes de salvar
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        } else {
+            throw new RuntimeException("user.password.required");
+        }
+        
+        // Define role padrão se não fornecida
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("USER");
+        }
 
         user = userRepository.save(user);
 

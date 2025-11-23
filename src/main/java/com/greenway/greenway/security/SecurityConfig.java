@@ -41,6 +41,8 @@ public class SecurityConfig {
                     "/", 
                     "/index.html",
                     "/cadastro-endereco.html",
+                    "/cadastro-usuario.html",
+                    "/login.html",
                     "/lista-enderecos.html",
                     "/enderecos",
                     "/static/**",

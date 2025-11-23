@@ -2,12 +2,12 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <title>Mapa da Rota</title>
+  <title>Mapa da Rota - GreenWay</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
     #map { height: 100vh; width: 100%; }
 
-    #btnLocalizacao, #btnCadastro {
+    #btnLocalizacao, #btnCadastro, #btnLogout {
       position: absolute;
       left: 20px;
       z-index: 9999;
@@ -19,6 +19,7 @@
       font-size: 16px;
       font-weight: bold;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
     }
 	
     #btnLocalizacao:hover,
@@ -26,19 +27,44 @@
       background: #f0f0f0;
     }
 
+    #btnLogout {
+      background: linear-gradient(135deg, #2d8659 0%, #1e5d3f 100%);
+      color: white;
+      border: none;
+    }
+
+    #btnLogout:hover {
+      background: linear-gradient(135deg, #1e5d3f 0%, #2d8659 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 134, 89, 0.4);
+    }
+
     /* Distância entre os botões */
     #btnLocalizacao { top: 20px; }
     #btnCadastro { top: 70px; }
+    #btnLogout { top: 120px; }
   </style>
 </head>
 <body>
+  <script>
+    // Verificar autenticação antes de carregar o mapa
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/login.html';
+    }
+  </script>
 
   <!-- Botão de localização -->
   <button id="btnLocalizacao">&#x1F4CD; Usar minha localização</button>
 
-  <!-- 🔥 Novo botão -->
+  <!-- Botão de cadastro de endereço -->
   <button id="btnCadastro" onclick="window.location.href='/cadastro-endereco.html'">
     ➕ Cadastrar novo destino
+  </button>
+
+  <!-- Botão de logout -->
+  <button id="btnLogout" onclick="logout()">
+    🚪 Sair
   </button>
 
   <div id="map"></div>
@@ -108,6 +134,17 @@
       );
 
     });
+
+    // ============================
+    // 🚪 FUNÇÃO DE LOGOUT
+    // ============================
+    function logout() {
+      if (confirm('Deseja realmente sair?')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
+        window.location.href = '/login.html';
+      }
+    }
   </script>
 </body>
 </html>

@@ -32,4 +32,7 @@ public class UserDTO {
     @NotBlank(message = "user.phone.notblank")
     @Pattern(regexp = "\\+?[0-9]{10,15}", message = "user.phone.invalid")
     private String phone;
+
+    @NotBlank(message = "user.password.notblank")
+    private String password;
 }
