@@ -16,8 +16,9 @@
 - ✅ **DB_URL via variável de ambiente**: `${DB_URL}`
 
 ### 3. Migrations
-- ✅ **V1__create_users.sql**: Tabela users criada
-- ✅ **V2__create_endereco.sql**: Tabela endereco criada
+- ✅ **V1__create_usuario.sql**: Drop das tabelas existentes (baseline limpo)
+- ✅ **V2__create_users.sql**: Tabela users criada
+- ✅ **V3__create_endereco.sql**: Tabela endereco criada
 - ✅ Localização: `src/main/resources/db/migration/`
 
 ### 4. Perfis
@@ -54,11 +55,12 @@ Mas não é necessário, pois o `application.properties` já está configurado p
    ```
    Flyway Community Edition 11.14.1 by Redgate
    Database: jdbc:sqlserver://...
-   Successfully validated 2 migrations
+   Successfully validated 3 migrations
    Current version of schema [dbo]: << Empty Schema >>
-   Migrating schema [dbo] to version "1 - create users"
-   Migrating schema [dbo] to version "2 - create endereco"
-   Successfully applied 2 migrations
+   Migrating schema [dbo] to version "1 - create usuario"
+   Migrating schema [dbo] to version "2 - create users"
+   Migrating schema [dbo] to version "3 - create endereco"
+   Successfully applied 3 migrations
    ```
 
 2. **Tabela flyway_schema_history**: O Flyway cria esta tabela automaticamente para rastrear migrations executadas.
@@ -92,7 +94,8 @@ src/main/resources/
 ├── application-test.properties     (H2 - testes)
 └── db/
     └── migration/
-        ├── V1__create_users.sql
-        └── V2__create_endereco.sql
+        ├── V1__create_usuario.sql
+        ├── V2__create_users.sql
+        └── V3__create_endereco.sql
 ```
 

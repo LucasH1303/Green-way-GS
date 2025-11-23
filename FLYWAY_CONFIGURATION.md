@@ -7,8 +7,9 @@
 - ✅ Versão gerenciada automaticamente pelo Spring Boot
 
 ### 2. Migrations criadas
-- ✅ `V1__create_users.sql` - Cria a tabela `users`
-- ✅ `V2__create_endereco.sql` - Cria a tabela `endereco`
+- ✅ `V1__create_usuario.sql` - Drop das tabelas existentes (baseline limpo)
+- ✅ `V2__create_users.sql` - Cria a tabela `users`
+- ✅ `V3__create_endereco.sql` - Cria a tabela `endereco`
 
 ### 3. Configurações por perfil
 
@@ -31,8 +32,9 @@
 src/main/resources/
 ├── db/
 │   └── migration/
-│       ├── V1__create_users.sql
-│       └── V2__create_endereco.sql
+│       ├── V1__create_usuario.sql
+│       ├── V2__create_users.sql
+│       └── V3__create_endereco.sql
 ├── application.properties
 ├── application-dev.properties
 ├── application-prod.properties
@@ -82,14 +84,14 @@ V{versão}__{descricao}.sql
 ```
 
 Exemplos:
-- `V3__create_patio.sql`
-- `V4__add_index_to_users.sql`
-- `V5__alter_endereco_add_cidade.sql`
+- `V4__create_patio.sql`
+- `V5__add_index_to_users.sql`
+- `V6__alter_endereco_add_cidade.sql`
 
 ### Exemplo de migration
 
 ```sql
--- V3__create_patio.sql
+-- V4__create_patio.sql
 CREATE TABLE patio (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
