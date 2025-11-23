@@ -3,21 +3,22 @@ package com.greenway.greenway;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest(
 	webEnvironment = SpringBootTest.WebEnvironment.NONE,
-	classes = GreenWayApplication.class,
 	properties = {
-		"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.amqp.RabbitRepositoriesAutoConfiguration,org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration",
+		"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.amqp.RabbitRepositoriesAutoConfiguration,org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration",
 		"spring.cache.type=none",
 		"management.endpoints.enabled-by-default=false",
 		"spring.jpa.hibernate.ddl-auto=create-drop",
-		"spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+		"spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+		"spring.datasource.driverClassName=org.h2.Driver",
+		"spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
+		"jwt.secret=test-secret-key-for-testing-purposes-only-minimum-32-characters-long",
+		"jwt.expiration=3600000"
 	}
 )
 @ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.properties")
 class GreenWayApplicationTests {
 
 	@Test
