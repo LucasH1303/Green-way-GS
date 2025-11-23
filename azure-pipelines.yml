@@ -37,13 +37,14 @@ steps:
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean package'
-      options: '-DskipTests=false'
+      options: '-DskipTests=false -Dspring.profiles.active=test'
       javaHomeOption: 'JDKVersion'
       jdkVersionOption: '1.17'
       jdkArchitectureOption: 'x64'
       publishJUnitResults: true
       testResultsFiles: '**/surefire-reports/TEST-*.xml'
       testRunTitle: 'Test Results'
+    continueOnError: false
 
   # Publicar artefatos
   - task: PublishBuildArtifacts@1
