@@ -1,14 +1,16 @@
 package com.greenway.greenway.exception;
 
 import jakarta.validation.ConstraintViolationException;
-
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -66,9 +68,39 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
     }
 
+    // Handle TypeMismatchException (erro de conversão de tipos)
+    @ExceptionHandler(TypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> handleTypeMismatch(TypeMismatchException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Erro de conversão de tipo");
+        error.put("message", "Não foi possível converter o valor '" + ex.getValue() + 
+                "' para o tipo esperado: " + ex.getRequiredType().getSimpleName());
+        error.put("field", ex.getPropertyName() != null ? ex.getPropertyName() : "desconhecido");
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    // Handle NoResourceFoundException (favicon, etc) - ignorar silenciosamente
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Void> handleNoResourceFound(NoResourceFoundException ex) {
+        // Ignorar erros de recursos estáticos não encontrados (como favicon.ico)
+        return ResponseEntity.notFound().build();
+    }
+
+    // Handle HttpMediaTypeNotSupportedException
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Tipo de conteúdo não suportado");
+        error.put("message", "O tipo de conteúdo '" + ex.getContentType() + "' não é suportado. Use 'application/x-www-form-urlencoded' ou 'application/json'.");
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(error);
+    }
+
     // Fallback geral + tradução de mensagens como user.email.duplicate
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAll(Exception ex, Locale locale) {
+        
+        // Log do erro completo para debug
+        ex.printStackTrace();
 
         String messageKey = ex.getMessage();
         String msg;
@@ -85,6 +117,6 @@ public class GlobalExceptionHandler {
             );
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msg);
     }
 }

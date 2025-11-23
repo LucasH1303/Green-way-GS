@@ -7,9 +7,8 @@
   <style>
     #map { height: 100vh; width: 100%; }
 
-    #btnLocalizacao {
+    #btnLocalizacao, #btnCadastro {
       position: absolute;
-      top: 20px;
       left: 20px;
       z-index: 9999;
       padding: 10px 16px;
@@ -21,16 +20,26 @@
       font-weight: bold;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
-
-    #btnLocalizacao:hover {
+	
+    #btnLocalizacao:hover,
+    #btnCadastro:hover {
       background: #f0f0f0;
     }
+
+    /* Distância entre os botões */
+    #btnLocalizacao { top: 20px; }
+    #btnCadastro { top: 70px; }
   </style>
 </head>
 <body>
 
-  <!-- Use a entidade HTML para o emoji do botão (mais resiliente) -->
+  <!-- Botão de localização -->
   <button id="btnLocalizacao">&#x1F4CD; Usar minha localização</button>
+
+  <!-- 🔥 Novo botão -->
+  <button id="btnCadastro" onclick="window.location.href='/cadastro-endereco.html'">
+    ➕ Cadastrar novo destino
+  </button>
 
   <div id="map"></div>
 
@@ -61,7 +70,6 @@
       .then(data => {
         const rota = data.routes[0].geometry;
 
-        // Desenha a linha real da rota
         L.geoJSON(rota, {
           style: {
             color: "blue",
@@ -69,7 +77,6 @@
           }
         }).addTo(map);
 
-        // Ajusta o zoom para caber a rota inteira
         const coords = rota.coordinates.map(c => [c[1], c[0]]);
         map.fitBounds(coords);
       });
@@ -91,7 +98,6 @@
 
           map.setView([lat, lon], 15);
 
-          // Usando escape Unicode para o emoji (resiliente caso haja qualquer problema)
           L.marker([lat, lon]).addTo(map)
             .bindPopup('\u{1F4CD} Você está aqui')
             .openPopup();

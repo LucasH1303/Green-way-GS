@@ -5,16 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -25,31 +25,50 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
-    // Configuração principal do SecurityFilterChain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            .cors(cors -> {})  // habilita CORS
+            .cors(cors -> {}) // habilita CORS
 
-            .csrf(csrf -> csrf.disable())  // desabilita CSRF
+            .csrf(csrf -> csrf.disable()) // desabilita CSRF
 
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless
 
             .authorizeHttpRequests(auth -> auth
+                // Permitir acesso às páginas HTML e recursos estáticos
+                .requestMatchers(
+                    "/", 
+                    "/index.html",
+                    "/cadastro-endereco.html",
+                    "/lista-enderecos.html",
+                    "/enderecos",
+                    "/static/**",
+                    "/js/**",
+                    "/css/**",
+                    "/images/**",
+                    "/favicon.ico"
+                ).permitAll()
+
+                // Endpoints públicos da API
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/maps/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/index.html", "/static/**").permitAll()
+                
+                .requestMatchers("/api/enderecos/**").permitAll()
+
+                // Rotas administrativas
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                // Demais requisições precisam estar autenticadas
                 .anyRequest().authenticated()
             );
 
-        // Permite acesso ao H2 console
+        // Permite uso do H2 console dentro de iframe
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
-        // Filtro JWT
+        // Adiciona o filtro JWT antes do filtro de autenticação padrão
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
