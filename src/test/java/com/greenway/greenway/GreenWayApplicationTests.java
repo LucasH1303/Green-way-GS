@@ -2,8 +2,7 @@ package com.greenway.greenway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(
@@ -17,22 +16,11 @@ import org.springframework.test.context.ActiveProfiles;
 		"spring.datasource.driverClassName=org.h2.Driver",
 		"spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
 		"jwt.secret=test-secret-key-for-testing-purposes-only-minimum-32-characters-long",
-		"jwt.expiration=3600000"
+		"jwt.expiration=3600000",
+		"spring.main.allow-bean-definition-overriding=true"
 	}
 )
-@ComponentScan(
-	basePackages = "com.greenway.greenway",
-	excludeFilters = {
-		@ComponentScan.Filter(
-			type = FilterType.REGEX,
-			pattern = "com\\.greenway\\.greenway\\.messaging\\..*"
-		),
-		@ComponentScan.Filter(
-			type = FilterType.ASSIGNABLE_TYPE,
-			classes = com.greenway.greenway.config.RabbitConfig.class
-		)
-	}
-)
+@Import(RabbitMQTestConfiguration.class)
 @ActiveProfiles("test")
 class GreenWayApplicationTests {
 
