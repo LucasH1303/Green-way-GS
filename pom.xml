@@ -67,11 +67,11 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- H2 (Para desenvolvimento local) -->
+        <!-- H2 (APENAS PARA TESTES) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>runtime</scope>
+            <scope>test</scope>
         </dependency>
 
         <!-- SPRING SECURITY -->
