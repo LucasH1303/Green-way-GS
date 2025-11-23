@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(
-	webEnvironment = SpringBootTest.WebEnvironment.NONE,
+	webEnvironment = SpringBootTest.WebEnvironment.MOCK,
 	properties = {
 		"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration",
 		"spring.cache.type=none",
