@@ -2,8 +2,12 @@ package com.greenway.greenway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+
+import com.greenway.greenway.security.SecurityConfig;
 
 @SpringBootTest(
 	webEnvironment = SpringBootTest.WebEnvironment.MOCK,
@@ -20,7 +24,14 @@ import org.springframework.test.context.ActiveProfiles;
 		"spring.main.allow-bean-definition-overriding=true"
 	}
 )
-@Import(RabbitMQTestConfiguration.class)
+@ComponentScan(
+	basePackages = "com.greenway.greenway",
+	excludeFilters = @ComponentScan.Filter(
+		type = FilterType.ASSIGNABLE_TYPE,
+		classes = SecurityConfig.class
+	)
+)
+@Import({RabbitMQTestConfiguration.class, TestSecurityConfig.class})
 @ActiveProfiles("test")
 class GreenWayApplicationTests {
 
