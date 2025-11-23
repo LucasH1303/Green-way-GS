@@ -2,6 +2,8 @@ package com.greenway.greenway;
 
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.support.NoOpCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -69,6 +71,13 @@ public class TestSecurityConfig {
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
+    }
+
+    @Bean
+    @Primary
+    public CacheManager cacheManager() {
+        // NoOpCacheManager é uma implementação que não faz cache (apenas para testes)
+        return new NoOpCacheManager();
     }
 }
 
